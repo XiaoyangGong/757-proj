@@ -1,0 +1,8 @@
+Assume you have gem5 setup
+
+cd $gem5-installation-dir
+
+scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
+#Note: This creats a build directory called "X86_MESI_Two_Level". We'll built a system using MESI_Two_Level, because gem5 has good support for it
+
+./build/ALPHA/gem5.opt -d m5out/blackscholes configs/example/fs.py --ruby --num-cpu=4 --l1i_size=512kB --l1d_size=16MB --l2_size=8MB --cpu-type=timing --restore-with-cpu=timing --script=run_scripts/blackscholes_16c_simsmall.rcS --checkpoint-at-end --kernel=/home/xx/gem5/full_system_images_ALPHA/binaries/vmlinux_2.6.27-gcc_4.3.4 --disk-image=/home/xxx/gem5/full_system_images_ALPHA/disks/linux-parsec-2-1-m5-with-test-inputs.img --max-checkpoints=5
