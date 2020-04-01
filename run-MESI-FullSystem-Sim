@@ -1,8 +1,40 @@
 Assume you have gem5 setup
 
-cd $gem5-installation-dir
+Step1: Build gem5.opt with MESI_Two_Level protocol
 
+cd $gem5-installation-dir
 scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
 #Note: This creats a build directory called "X86_MESI_Two_Level". We'll built a system using MESI_Two_Level, because gem5 has good support for it
 
-./build/ALPHA/gem5.opt -d m5out/blackscholes configs/example/fs.py --ruby --num-cpu=4 --l1i_size=512kB --l1d_size=16MB --l2_size=8MB --cpu-type=timing --restore-with-cpu=timing --script=run_scripts/blackscholes_16c_simsmall.rcS --checkpoint-at-end --kernel=/home/xx/gem5/full_system_images_ALPHA/binaries/vmlinux_2.6.27-gcc_4.3.4 --disk-image=/home/xxx/gem5/full_system_images_ALPHA/disks/linux-parsec-2-1-m5-with-test-inputs.img --max-checkpoints=5
+Step2: Prepare linux kernel and disk image for full system simulation
+Download1: http://www.m5sim.org/dist/current/x86/x86-system.tar.bz2
+# You should have a binaries/x86_64-vmlinux-2.6.22.9 and a disks/linux-x86.img. Save two folder in gem5 directory
+
+Download2:http://www.cs.utexas.edu/~parsec_m5/x86root-parsec.img.bz2
+# This is the disk img of PARSEC for x86. Save the file in disks folder
+
+Step3: Test your build
+./build/X86_MESI_Two_Level/gem5.opt -d m5out/test configs/example/fs.py --kernel=/$YOUR_PATH/binaries/x86_64-vmlinux-2.6.22.9 --disk-image=/$YOUR_PATH/disks/x86root-parsec.img 
+
+# You need to use a terminal to view simulation because it's full system simulation
+# At your gem5 home directory, enter
+
+cd util/term
+make
+util/term/m5term localhost 3456
+
+# You should see some output from terminal. Eventually you will see a bash shell terminal
+# Try simple commands like:
+ls
+sbin/m5 exit
+# Once simulation exits, you can view stats at $gem5/m5out/test
+
+Step3: Simulation
+
+# I set L1 D-cache to 16MB (very big) and full-associative, to ensure all L1 misses are either cold miss or coherence miss.
+# I only tested cacheline_size=64 bytes. Feel free to test other cache line size
+# I used a run script to run blackschole workload in PARSEC. Download here:
+https://github.com/realXGong/757-proj/blob/master/blackschole_4c_test.rcS
+
+# At your gem5 directory, enter
+./build/X86_MESI_Two_Level/gem5.opt -d m5out/blackscholes configs/example/fs.py --ruby --num-cpu=4 --l1i_size=512kB --l1i_assoc=16 --l1d_size=16MB --l1d_assoc=131072 --cacheline_size=64 --l2_size=8MB --cpu-type=TimingSimpleCPU --script=/YOUR_PATH/run_scripts/blackschole_4c_test.rcS --restore-with-cpu=TimingSimpleCPU --checkpoint-at-end --kernel=/YOUR_PATH/binaries/x86_64-vmlinux-2.6.22.9 --disk-image=/YOUR_PATH/disks/x86root-parsec.img --max-checkpoints=5
