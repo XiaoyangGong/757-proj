@@ -1,0 +1,19 @@
+This is instruction for running SE simulation for false-sharing program, with MESI coherence protocol or other protocols
+
+Assume you have gem5 setup
+
+Step 1. Build gem5.opt with MESI_Two_Level protocol
+Skip if you have done so in https://github.com/realXGong/757-proj/blob/master/run-MESI-FullSystem-Sim
+cd $gem5-installation-dir
+scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
+#Note: This creats a build directory called "X86_MESI_Two_Level". We'll built a system using MESI_Two_Level, because gem5 has good support for it
+
+Step 2. Download false sharing program. Reference: Coherence Decoupling: Making Use of Incoherence paper
+critical-fs: Precomplied binary for gem5 simulator. https://github.com/realXGong/757-proj/blob/master/false-sharing/critical-fs
+critical-fs.cpp: Source code https://github.com/realXGong/757-proj/blob/master/false-sharing/critical-fs.cpp
+
+If you want to modify critical-fs.cpp, follow https://github.com/WeijingShi/playground/blob/master/Run-openmp-code-in-gem5.md instructions to complie
+
+Step 3. Simulation
+cd $YOUR_GEM5_DIR
+build/X86_MESI_Two_Level/gem5.opt configs/example/se.py --ruby -n 8 --cpu-type=DerivO3CPU --l1i_size=512kB --l1i_assoc=512kB --l1d_size=16MB --l1d_assoc=8 --cacheline_size=64 --l2_size=8MB -c /YOUR_PATH/critical-fs -o '4 10'
