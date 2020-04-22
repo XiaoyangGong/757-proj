@@ -3,7 +3,7 @@ Assume you have gem5 setup
 Step1: Build gem5.opt with MESI_Two_Level protocol
 
 cd $gem5-installation-dir
-scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
+scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level --default=X86
 #Note: This creats a build directory called "X86_MESI_Two_Level". We'll built a system using MESI_Two_Level, because gem5 has good support for it
 
 Step2: Prepare linux kernel and disk image for full system simulation
