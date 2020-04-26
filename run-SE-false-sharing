@@ -5,7 +5,7 @@ Assume you have gem5 setup
 Step 1. Build gem5.opt with MESI_Two_Level protocol
 Skip if you have done so in https://github.com/realXGong/757-proj/blob/master/run-MESI-FullSystem-Sim
 cd $gem5-installation-dir
-scons FULL_SYSTEM=1 build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
+scons build/X86_MESI_Two_Level/gem5.opt RUBY=true PROTOCOL=MESI_Two_Level
 #Note: This creats a build directory called "X86_MESI_Two_Level". We'll built a system using MESI_Two_Level, because gem5 has good support for it
 
 Step 2. Download false sharing program. Reference: Coherence Decoupling: Making Use of Incoherence paper
