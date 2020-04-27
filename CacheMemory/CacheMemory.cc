@@ -39,6 +39,8 @@
 #include "mem/cache/replacement_policies/weighted_lru_rp.hh"
 #include "mem/ruby/protocol/AccessPermission.hh"
 #include "mem/ruby/system/RubySystem.hh"
+#include "mem/ruby/common/MachineID.hh"
+#include "mem/ruby/common/DataBlock.hh"
 
 using namespace std;
 
@@ -172,8 +174,24 @@ CacheMemory::getAddressAtIdx(int idx) const
 
 //bool
 //CacheMemory::predict(Addr address, RubyRequestType type, DataBlock*& data_ptr)
-void CacheMemory::predict()
-{   /*
+void CacheMemory::predict(MachineID machineID, Addr address)
+{   
+    // Increament total number of prediction couter by 1
+    // TODO
+
+    // Get requesting cache's ID
+    // int requestorID = machineID.num;
+
+    // Read from invalid cache line
+    // TODO: lookup()...
+
+    // Get invalid cache line's data value
+    // TODO: Value = ...
+
+    // Store [requestorID, data] to a table
+    // TODO: hashmap<> = [requestorID, data]
+
+    /*
     assert(address == makeLineAddress(address));
     DPRINTF(RubyCache, "Try RIL address: %#x\n", address);
     int64_t cacheSet = addressToCacheSet(address);
@@ -192,8 +210,28 @@ void CacheMemory::predict()
     data_ptr = NULL;
     return false;
     */
-    DPRINTF(RubyCacheMemory, "Predict!");
+    DPRINTF(RubyCacheMemory, "Node ID is %d\n", machineID.num);
+    //DPRINTF(RubyCacheMemory, "Predict!");
 }
+
+void CacheMemory::predictScoreBoard(MachineID machineID, Addr address, DataBlock dataBlk){
+    // Input: actual value, receiver's machineID
+
+    // Get receiving cache's ID
+    // int receiverID = machineID.num;
+
+    // Find predicted value in table
+    // TODO: hashmap.get(receiverID)
+
+    // Compare actual value w/ predicted value. Update predictor score
+    // TODO:
+    // if (actual == predict) score++; 
+
+    // TODO: Remove <requestor, data> from table
+    // hashmap.remove
+}
+
+
 
 bool
 CacheMemory::tryCacheAccess(Addr address, RubyRequestType type,

@@ -58,10 +58,13 @@ class CacheMemory : public SimObject
 
     void init();
 
-    // Make prediction
-    void predict();
-    
     // Public Methods
+    // Make prediction
+    void predict(MachineID machineID, Addr address);
+
+    // Check predicted value with actual value
+    void predictScoreBoard(MachineID machineID, Addr address, DataBlock dataBlk);
+    
     // perform a cache access and see if we hit or not.  Return true on a hit.
     bool tryCacheAccess(Addr address, RubyRequestType type,
                         DataBlock*& data_ptr);
@@ -205,6 +208,9 @@ class CacheMemory : public SimObject
      * false.
      */
     bool m_use_occupancy;
+
+    // Score for predictor
+    int score; 
 };
 
 std::ostream& operator<<(std::ostream& out, const CacheMemory& obj);

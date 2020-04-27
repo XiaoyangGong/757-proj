@@ -695,9 +695,8 @@ machine(MachineType:L1Cache, "MSI cache")
   		// Entry cache_entry := getCacheEntry(address);
 
         Entry inv_cache_entry := getCacheEntry(address);
-        cacheMemory.predict();
+        cacheMemory.predict(machineID, address);
 
-        
         // If invalid cache line does exist, decide wheather to use it
         // I guess is_valid is just checking if it's NULL
         // It's not checking cache line state
@@ -706,6 +705,12 @@ machine(MachineType:L1Cache, "MSI cache")
             // Update predicted value. Need to find a global data structure
         }
   	}
+
+    action(comparePredict, "cmppd", desc="Compare actual value w/ predicted value"){
+        // Caller of this action is receiving cache. Get its machine ID and pass to predictScoreBoard()
+        cacheMemory.predictScoreBoard(machineID, address, cache_entry.DataBlk);
+    }
+
     
     /*************************************************************************/
     // These are the transition definition. These are simply each cell in the
@@ -719,9 +724,6 @@ machine(MachineType:L1Cache, "MSI cache")
     // Within the transition statement is a set of action to take during the
     // transition. These actions are executed atomically (i.e., all or nothing)
     transition(I, Load, IS_D) {
-    	// TODO: On LOAD event at invalid state, read from invalid line if tagHit
-        predict;
-    	 
         // Make sure there is room in the cache to put the block whenever the
         // miss returns. Otherwise we could deadlock.
         allocateCacheBlock;
@@ -730,6 +732,8 @@ machine(MachineType:L1Cache, "MSI cache")
         allocateTBE;
         // Actually send the request to the directory
         sendGetS;
+        // TODO: On LOAD event at invalid state, read from invalid line if tagHit
+        predict;
         // Since we have handled this request on the mandatory queue, we can pop
         popMandatoryQueue;
     }
@@ -752,11 +756,13 @@ machine(MachineType:L1Cache, "MSI cache")
 
     // Similarly, on either DataDirNoAcks or DataOwner we should go to S
     transition(IS_D, {DataDirNoAcks, DataOwner}, S) {
-        // TODO: 
+        writeDataToCache;
+
         // 1. Read actual data
         // 2. Compare predicted data vs actual data
         // 3. Update score and predictor
-        writeDataToCache;
+        comparePredict;
+
         deallocateTBE;
         externalLoadHit;
         popResponseQueue;
