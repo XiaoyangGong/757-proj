@@ -65,6 +65,8 @@ CacheMemory::CacheMemory(const Params *p)
     tagArray(p->tagArrayBanks, p->tagAccessLatency,
              p->start_index_bit, p->ruby_system)
 {
+    m_total_predict = 0;
+    m_correct_predict = 0;
     m_cache_size = p->size;
     m_cache_assoc = p->assoc;
     m_replacementPolicy_ptr = p->replacement_policy;
@@ -177,58 +179,57 @@ CacheMemory::getAddressAtIdx(int idx) const
 void CacheMemory::predict(MachineID machineID, Addr address)
 {   
     // Increament total number of prediction couter by 1
-    // TODO
+    m_total_predict++;
 
     // Get requesting cache's ID
-    // int requestorID = machineID.num;
+    int requestorID = machineID.num;
 
     // Read from invalid cache line
-    // TODO: lookup()...
-
+    AbstractCacheEntry* entry = lookup(address);
+    
     // Get invalid cache line's data value
-    // TODO: Value = ...
+    DataBlock& dataBlk = entry->getDataBlk();
+    DataBlock* dataBlk_ptr = &dataBlk;
+
+    // Predict if processor should use invalid cache line
+    // TODO: bool taken = predictor();
+    // Assume always taken
+    bool taken = true;
+
+    // Store invalid line data and T/NT to predict_result
+    predict_res_t predict_res = {};
+    predict_res.blk = dataBlk_ptr;
+    predict_res.taken = taken;
 
     // Store [requestorID, data] to a table
-    // TODO: hashmap<> = [requestorID, data]
+    m_predict[requestorID] = predict_res;
 
-    /*
-    assert(address == makeLineAddress(address));
-    DPRINTF(RubyCache, "Try RIL address: %#x\n", address);
-    int64_t cacheSet = addressToCacheSet(address);
-    int loc = findTagInSet(cacheSet, address);
-    if (loc != -1) {
-        // Do we even have a tag match?
-        DPRINTF(RubyCache, "RIL TAGHIT on address: %#x\n", address);
-        AbstractCacheEntry* entry = m_cache[cacheSet][loc];
-        m_replacementPolicy_ptr->touch(replacement_data[cacheSet][loc]);
-        m_cache[cacheSet][loc]->setLastAccess(curTick());
-        data_ptr = &(entry->getDataBlk());
-
-        // Check if cache line state is invalid
-        return m_cache[cacheSet][loc]->m_Permission == AccessPermission_Invalid;
-    }
-    data_ptr = NULL;
-    return false;
-    */
     DPRINTF(RubyCacheMemory, "Node ID is %d\n", machineID.num);
-    //DPRINTF(RubyCacheMemory, "Predict!");
 }
 
-void CacheMemory::predictScoreBoard(MachineID machineID, Addr address, DataBlock dataBlk){
-    // Input: actual value, receiver's machineID
+void CacheMemory::predictScoreBoard(MachineID machineID, Addr address, DataBlock& actual_data){
 
     // Get receiving cache's ID
-    // int receiverID = machineID.num;
+    int receiverID = machineID.num;
 
-    // Find predicted value in table
-    // TODO: hashmap.get(receiverID)
+    // Find predict result in table
+    predict_res_t predict_res = m_predict[receiverID];
 
-    // Compare actual value w/ predicted value. Update predictor score
-    // TODO:
-    // if (actual == predict) score++; 
+    // Get invalid line data and taken/nontaken info
+    DataBlock& predict_data = *predict_res.blk;
+    bool taken = predict_res.taken;
 
-    // TODO: Remove <requestor, data> from table
-    // hashmap.remove
+    // If we predict taken and predict value matches with actual value
+    // Increment score by one
+    // Else if we predict non-taken and predict value doesn't match with actual value
+    // Increment score by one
+    if (predict_data == actual_data && taken) 
+        score++;
+    else if(!(predict_data == actual_data) && !taken)
+        score++;
+
+    // Remove <requestor, data> from table
+    m_predict.erase(receiverID);
 }
 
 
