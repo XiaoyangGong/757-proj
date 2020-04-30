@@ -1,0 +1,20 @@
+How to Setup FANN (Dependency):
+-------------------------------
+git clone https://github.com/libfann/fann.git
+cd fann
+cmake .
+sudo make install
+
+How to Setup AXBench:
+---------------------
+git clone https://bitbucket.org/act-lab/axbench.git
+bash parrot.c/src/cleanlib.sh
+bash parrot.c/src/buildlib.sh
+vim applications/config.mk
+	(Edit the path for Parrot and FANN Library env vars)
+bash fann.template/make_all.sh
+
+
+To Run AXBench:
+---------------
+bash run.sh
