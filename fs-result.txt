@@ -1,0 +1,57 @@
+MSI protocols
+
+L1 16KB, 4 cores, 64B cache block, assoc 4
+critical-fs
+
+Type 0: Static, always taken
+Iteration 100: Total prediction: 2324, Correct prediction: 853, Predictor accuracy is 0.367
+Iteration 1000: Total prediction: 2495, Correct prediction: 1206, Predictor accuracy is 0.483
+Iteration 10000: Total prediction: 12201, Correct prediction: 10738, Predictor accuracy is 0.880
+Iteration 100000: Total prediction: 52239, Correct prediction: 50782, Predictor accuracy is 0.972
+Iteration 1M: Total prediction: 1001927, Correct prediction: 1000472, Predictor accuracy is 0.999
+
+fs-reduction
+Iteration 100: Total prediction: 2289, Correct prediction: 843, Predictor accuracy is 0.368
+Iteration 1000: Total prediction: 3133, Correct prediction: 1680, Predictor accuracy is 0.536
+Iteration 10000: Total prediction: 11687, Correct prediction: 10236, Predictor accuracy is 0.876
+Iteration 100000: Total prediction: 176280, Correct prediction: 174962, Predictor accuracy is 0.993
+Iteration 1M: 1438345, Correct prediction: 1437012, Predictor accuracy is 0.999
+
+Two level type 1 last taken
+critical-fs
+Iteration 100:Total prediction: 2324, Correct prediction: 808, Predictor accuracy is 0.348
+Iteration 1000: Total prediction: 2488, Correct prediction: 1171, Predictor accuracy is 0.471
+Iteration 10000: Total prediction: 12201, Correct prediction: 10717, Predictor accuracy is 0.878
+Iteration 100000: Total prediction: 52239, Correct prediction: 50757, Predictor accuracy is 0.972
+
+
+
+
+
+
+
+
+
+
+
+MESI
+Static always taken
+Ite 100:
+Ite 1k:
+Ite 10k:
+Ite 100k:
+Ite 1M:
+
+Two level type 1
+Ite 100: Total prediction: 155, Correct prediction: 42, Predictor accuracy is 0.271
+Ite 1k:Total prediction: 1927, Correct prediction: 59, Predictor accuracy is 0.031
+Ite 10k:
+Ite 100k:
+Ite 1M:
+
+Two level type 2
+Ite 100:
+Ite 1k:
+Ite 10k:
+Ite 100k:
+Ite 1M:
